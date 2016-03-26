@@ -1,0 +1,35 @@
+@SuppressWarnings("deprecation")
+public class WeatherTest {
+    public static void main(String[] args) throws Exception {
+        String u = URLEncoder.encode("兰州", "UTF-8");
+        String url = "http://wthrcdn.etouch.cn/weather_mini?city=" + u;
+        String post = get(url);
+        System.out.println(post);
+    }
+
+    public static String get(String url) {
+        HttpClient client = new DefaultHttpClient();
+        HttpGet get = new HttpGet(url);
+        //res.setHeader("Accept","text/plain; charset=utf-8");
+        String json = null;
+        try {
+            HttpResponse res = client.execute(get);
+            res.setHeader("Accept","text/plain; charset=utf-8");
+            if (res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                HttpEntity entity = res.getEntity();
+                ContentType.getOrDefault(entity);
+                System.out.println(ContentType.getOrDefault(entity));
+                json = EntityUtils.toString(new GzipDecompressingEntity(entity),"utf-8");
+//              System.out.println(json);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException();
+        } finally {
+            client.getConnectionManager().shutdown();
+        }
+        return json;
+    }
+
+}
+
+jars include commons-logging-1.1.1.jar、httpclient-4.3.1.jar、httpcore-4.3.jar
